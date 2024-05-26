@@ -29,6 +29,11 @@ docker run -p 3000:80 frontend-six:latest
 ## Front-end
 
 - Dynamic runtime backend env configuration
+- Tests
+
+## Back-end
+
+- Test
 
 # Architecture diagram
 
