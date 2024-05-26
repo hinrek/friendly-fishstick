@@ -1,27 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import getConfig from './config';
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const App = () => {
-  const [backendUrl, setBackendUrl] = useState('');
   const [users, setUsers] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    const fetchConfig = async () => {
-      const config = await getConfig();
-      setBackendUrl(config.REACT_APP_BACKEND_URL || 'http://backend:8080');
-    };
-    fetchConfig();
+    fetchUsers();
   }, []);
-
-  useEffect(() => {
-    if (backendUrl) {
-      fetchUsers();
-    }
-  }, [backendUrl]);
 
   const fetchUsers = async () => {
     try {

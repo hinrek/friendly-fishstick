@@ -37,3 +37,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/frontend-six:latest
+          build-args: |
+            REACT_APP_BACKEND_URL=http://backend:8080
