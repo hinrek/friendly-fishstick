@@ -29,7 +29,7 @@ jobs:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
           echo "Setting up Kubernetes context"
-          echo "${KUBE_CONFIG_DATA}" | base64 --decode > ${HOME}/.kube/config""
+          echo '${KUBE_CONFIG_DATA}" | base64 --decode > ${HOME}/.kube/config"'
 
       - name: Mock Deploy backend to Kubernetes using Helm
         run: |
