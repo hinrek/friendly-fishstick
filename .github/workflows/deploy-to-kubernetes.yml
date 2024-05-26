@@ -1,0 +1,40 @@
+name: Mock Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
+
+jobs:
+  mock-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+
+      - name: Set up K8s context
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          echo "Setting up Kubernetes context"
+          echo "${KUBE_CONFIG_DATA}" | base64 --decode > ${HOME}/.kube/config"
+
+      - name: Mock Deploy backend to Kubernetes using Helm
+        run: |
+          echo "helm upgrade --install backend ./helm-charts/backend --set image.repository=${{ secrets.DOCKER_USERNAME }}/backend-app,image.tag=latest"
+
+      - name: Mock Deploy frontend to Kubernetes using Helm
+        run: |
+          echo "helm upgrade --install frontend ./helm-charts/frontend --set image.repository=${{ secrets.DOCKER_USERNAME }}/frontend-app,image.tag=latest"
