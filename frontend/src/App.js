@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import getConfig from './config';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
-function App() {
+const App = () => {
+  const [backendUrl, setBackendUrl] = useState('');
   const [users, setUsers] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    fetchUsers();
+    const fetchConfig = async () => {
+      const config = await getConfig();
+      setBackendUrl(config.REACT_APP_BACKEND_URL || 'http://backend:8080');
+    };
+    fetchConfig();
   }, []);
+
+  useEffect(() => {
+    if (backendUrl) {
+      fetchUsers();
+    }
+  }, [backendUrl]);
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/users`);
+      const response = await axios.get(`${backendUrl}/api/users`);
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -25,7 +35,7 @@ function App() {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/users`, {
+      const response = await axios.post(`${backendUrl}/api/users`, {
         name,
         email
       });
@@ -39,7 +49,7 @@ function App() {
 
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(`${BACKEND_URL}/api/users/${id}`);
+      await axios.delete(`${backendUrl}/api/users/${id}`);
       setUsers(users.filter(user => user.id !== id));
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -75,6 +85,6 @@ function App() {
       </ul>
     </div>
   );
-}
+};
 
 export default App;
